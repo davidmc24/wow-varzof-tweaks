@@ -1,10 +1,28 @@
 local curAddonName = "VarzofTweaks";
 local curAddonTitle = "Varzof's UI Tweaks";
-local messagePrefix = WrapTextInColorCode(curAddonName, "FF69CCF0") .. ": ";
+local messagePrefix = WrapTextInColorCode(curAddonName, "FF69CCF0") .. ":";
+local ACHIEVEMENT_FLAG_ACCOUNT_WIDE = 0x20000;
 
 local defaults = {
     untrackCompletedAchievements = false,
 }
+
+local function getTrackedAchievementIDs()
+    local atype = Enum.ContentTrackingType.Achievement;
+    return C_ContentTracking.GetTrackedIDs(atype);
+end
+
+local function isAchievementComplete(id)
+    local _, _, _, completedByAnyCharacter, _, _, _, _, flags, _, _, _, wasEarnedByMe, _, _ = GetAchievementInfo(id);
+    local accountWide = bit.band(flags, ACHIEVEMENT_FLAG_ACCOUNT_WIDE) > 0;
+    return wasEarnedByMe or (accountWide and completedByAnyCharacter);
+end
+
+local function untrackCompletedAchievement(id)
+    local atype = Enum.ContentTrackingType.Achievement;
+    local stype = Enum.ContentTrackingStopType.Collected;
+    C_ContentTracking.StopTracking(atype, id, stype);
+end
 
 local f = CreateFrame("Frame");
 
@@ -34,14 +52,9 @@ function f:InitializeOptions()
     local cb = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
     cb:SetPoint("TOPLEFT", 20, -20)
     cb.Text:SetText("Un-track completed achievements");
-    cb:HookScript("OnClick", function(_, btn, down)
-        print("Clicked");
+    cb:HookScript("OnClick", function()
         self.db.untrackCompletedAchievements = cb:GetChecked();
-        if self.db.untrackCompletedAchievements then
-            print("Enabled");
-        else
-            print("Disabled");
-        end
+        self:CheckForTrackedCompletedAchievements();
     end)
     cb:SetChecked(self.db.untrackCompletedAchievements);
 
@@ -49,20 +62,25 @@ function f:InitializeOptions()
 end
 
 function f:CheckForTrackedCompletedAchievements()
-    local atype = Enum.ContentTrackingType.Achievement;
-    local stype = Enum.ContentTrackingStopType.Collected;
-    local ids = C_ContentTracking.GetTrackedIDs(atype);
-    for index = 1, #ids do
-        local id = ids[index];
-        local _, achievementName, points, completed, month, day, year, description, flags, iconpath = GetAchievementInfo(id);
-        local achievementLink = GetAchievementLink(id);
-        if (completed) then
-            if self.db.untrackCompletedAchievements then
-                print(messagePrefix .. "Untracked completed achievement " .. achievementLink);
-                --C_ContentTracking.StopTracking(atype, id, stype);
-            else
-                print(messagePrefix .. "Achievement " .. achievementLink .. " is complete but still tracked");
+    local trackedIds = getTrackedAchievementIDs();
+    local fix = self.db.untrackCompletedAchievements;
+    local completedIds = {};
+    for i = 1, #trackedIds do
+        local id = trackedIds[i];
+        if isAchievementComplete(id) then
+            table.insert(completedIds, id);
+        end
+    end
+    if #completedIds > 0 then
+        if fix then
+            for i = 1, #completedIds do
+                local id = completedIds[i];
+                local achievementLink = GetAchievementLink(id);
+                untrackCompletedAchievement(id);
+                print(messagePrefix, "Untracked completed achievement", achievementLink);
             end
+        else
+            print(messagePrefix, #completedIds, "completed achievements currently tracked");
         end
     end
 end
@@ -73,23 +91,6 @@ f:SetScript("OnEvent", f.OnEvent);
 SLASH_VARZOFTWEAKS1 = "/vt"
 SLASH_VARZOFTWEAKS2 = "/varzoftweaks"
 
-SlashCmdList.VARZOFTWEAKS = function(msg, editBox)
+SlashCmdList.VARZOFTWEAKS = function()
     InterfaceOptionsFrame_OpenToCategory(f.panel)
 end
-
---local atype = Enum.ContentTrackingType.Achievement;
---local stype = Enum.ContentTrackingStopType.Collected;
---local index;
---local ids = C_ContentTracking.GetTrackedIDs(atype);
---for index = 1, #ids do
---    local id = ids[index];
---    local _, achievementName, points, completed, month, day, year, description, flags, iconpath = GetAchievementInfo(id);
---    if (completed) then
---        print(achievementName .. " is complete but still tracked");
---        C_ContentTracking.StopTracking(atype, id, stype);
---        print("Fixed");
---    end
---end
---local max = Constants.ContentTrackingConsts.MaxTrackedAchievements;
---ids = C_ContentTracking.GetTrackedIDs(atype);
---print(#ids .. "/" .. max);
