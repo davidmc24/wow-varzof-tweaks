@@ -34,7 +34,6 @@ function f:InitializeOptions()
     local cb = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
     cb:SetPoint("TOPLEFT", 20, -20)
     cb.Text:SetText("Un-track completed achievements");
-    -- there already is an existing OnClick script that plays a sound, hook it
     cb:HookScript("OnClick", function(_, btn, down)
         print("Clicked");
         self.db.untrackCompletedAchievements = cb:GetChecked();
@@ -70,6 +69,13 @@ end
 
 f:RegisterEvent("ADDON_LOADED");
 f:SetScript("OnEvent", f.OnEvent);
+
+SLASH_VARZOFTWEAKS1 = "/vt"
+SLASH_VARZOFTWEAKS2 = "/varzoftweaks"
+
+SlashCmdList.VARZOFTWEAKS = function(msg, editBox)
+    InterfaceOptionsFrame_OpenToCategory(f.panel)
+end
 
 --local atype = Enum.ContentTrackingType.Achievement;
 --local stype = Enum.ContentTrackingStopType.Collected;
