@@ -1,0 +1,8 @@
+## Interface: 100205
+## Title: Varzof's UI Tweaks
+## Notes: Assorted UI tweaks provided by |cFF69CCF0Varzof|r
+## Author: David M. Carr (Varzof)
+## Version: 1.0.0
+## IconTexture: Interface\AddOns\VarzofTweaks\assets\favicon-32x32.png
+
+VarzofTweaks.lua
