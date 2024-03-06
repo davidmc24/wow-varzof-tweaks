@@ -94,3 +94,7 @@ SLASH_VARZOFTWEAKS2 = "/varzoftweaks"
 SlashCmdList.VARZOFTWEAKS = function()
     InterfaceOptionsFrame_OpenToCategory(f.panel)
 end
+
+function VarzofTweak_OnAddonCompartmentClick()
+    InterfaceOptionsFrame_OpenToCategory(f.panel)
+end

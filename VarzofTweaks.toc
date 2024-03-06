@@ -4,6 +4,7 @@
 ## Author: David M. Carr (Varzof)
 ## Version: 1.0.0
 ## SavedVariables: VarzofTweaksDB
+## AddonCompartmentFunc: VarzofTweak_OnAddonCompartmentClick
 ## IconTexture: Interface\AddOns\VarzofTweaks\assets\favicon-32x32.png
 
 VarzofTweaks.lua
