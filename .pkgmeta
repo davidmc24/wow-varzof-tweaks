@@ -1,0 +1,6 @@
+package-as: varzof
+enable-toc-creation: yes
+
+ignore:
+    - "*.md"
+    - "*.sh"
