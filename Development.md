@@ -9,3 +9,5 @@ Icon from https://favicon.io/favicon-generator/:
 * Font Size: 110
 * Font Color: #08F
 * Background Color: #000
+
+Logo from logo.com

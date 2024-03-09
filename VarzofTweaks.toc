@@ -6,5 +6,6 @@
 ## SavedVariables: VarzofTweaksDB
 ## AddonCompartmentFunc: VarzofTweak_OnAddonCompartmentClick
 ## IconTexture: Interface\AddOns\VarzofTweaks\assets\favicon-32x32.png
+## X-Curse-Project-ID: 984622
 
 VarzofTweaks.lua
