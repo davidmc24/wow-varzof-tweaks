@@ -1,10 +1,10 @@
 Assorted UI tweaks provided by Varzof.
 
-Features:
+# Features
 
 * [Un-track completed achievements](#un-track-completed-achievements) workaround
 
-# Un-track completed achievements
+## Un-track completed achievements
 
 In some cases, tracked achievements remain tracked after the achievement has been completed.
 This most often happens when the achievement is completed on a different character on the same account.
