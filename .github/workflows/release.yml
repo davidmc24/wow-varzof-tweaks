@@ -4,16 +4,17 @@ on:
     branches:
       - main
     tags:
-      - '**'
+      - '*'
 jobs:
   release:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Clone project
+      - name: Checkout addon
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Package and release
         uses: BigWigsMods/packager@v2
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
