@@ -1,7 +1,8 @@
-local curAddonName = "VarzofTweaks";
+local curAddonName, NS = ...;
 local curAddonTitle = "Varzof's UI Tweaks";
 local messagePrefix = WrapTextInColorCode(curAddonName, "FF69CCF0") .. ":";
 local ACHIEVEMENT_FLAG_ACCOUNT_WIDE = 0x20000;
+local debug = true;
 
 local defaults = {
     untrackCompletedAchievements = false,
@@ -13,18 +14,31 @@ local function getTrackedAchievementIDs()
 end
 
 local function isAchievementComplete(id)
-    local _, _, _, completedByAnyCharacter, _, _, _, _, flags, _, _, _, wasEarnedByMe, _, _ = GetAchievementInfo(id);
+    local _, name, _, completedByAnyCharacter, _, _, _, _, flags, _, _, _, wasEarnedByMe, _, _ = GetAchievementInfo(id);
     local accountWide = bit.band(flags, ACHIEVEMENT_FLAG_ACCOUNT_WIDE) > 0;
-    return wasEarnedByMe or (accountWide and completedByAnyCharacter);
+    local complete = wasEarnedByMe or (accountWide and completedByAnyCharacter);
+    if debug then
+        if complete then
+            print("Tracking " .. name .. ": complete");
+        else
+            print("Tracking " .. name .. ": incomplete");
+        end
+    end
+
+    return complete;
 end
 
 local function untrackCompletedAchievement(id)
     local atype = Enum.ContentTrackingType.Achievement;
-    local stype = Enum.ContentTrackingStopType.Collected;
+    local stype = Enum.ContentTrackingStopType.Manual;
     C_ContentTracking.StopTracking(atype, id, stype);
 end
 
 local f = CreateFrame("Frame");
+
+local function updateUntrackCompletedAchievements()
+    f:CheckForTrackedCompletedAchievements();
+end
 
 function f:OnEvent(event, addOnName)
     if addOnName == curAddonName then
@@ -35,6 +49,9 @@ function f:OnEvent(event, addOnName)
 end
 
 function f:OnLoad()
+    if debug then
+        print("VT loaded");
+    end
     self:InitializeDB();
     self:InitializeOptions();
     self:CheckForTrackedCompletedAchievements();
@@ -49,22 +66,31 @@ function f:InitializeOptions()
     self.panel = CreateFrame("Frame");
     self.panel.name = curAddonTitle;
 
-    local cb = CreateFrame("CheckButton", nil, self.panel, "InterfaceOptionsCheckButtonTemplate")
-    cb:SetPoint("TOPLEFT", 20, -20)
-    cb.Text:SetText("Un-track completed achievements");
-    cb:HookScript("OnClick", function()
-        self.db.untrackCompletedAchievements = cb:GetChecked();
-        self:CheckForTrackedCompletedAchievements();
-    end)
-    cb:SetChecked(self.db.untrackCompletedAchievements);
+    local category = Settings.RegisterVerticalLayoutCategory(curAddonTitle);
+    do
+        local variable = "untrackCompletedAchievements";
+        local name = "Cleanup achievements";
+        local tooltip = "Un-track completed achievements";
+        local variableKey = "untrackCompletedAchievements";
+        local variableTbl = self.db;
+        local defaultValue = false;
 
-    InterfaceOptions_AddCategory(self.panel);
+        local setting = Settings.RegisterAddOnSetting(category, variable, variableKey, variableTbl, type(defaultValue), name, defaultValue);
+        setting:SetValueChangedCallback(updateUntrackCompletedAchievements);
+        Settings.CreateCheckbox(category, setting, tooltip);
+    end
+
+    Settings.RegisterAddOnCategory(category);
+    NS.settingsCategoryID = category:GetID();
 end
 
 function f:CheckForTrackedCompletedAchievements()
     local trackedIds = getTrackedAchievementIDs();
     local fix = self.db.untrackCompletedAchievements;
     local completedIds = {};
+    if debug then
+        print(#trackedIds .. " tracked IDs");
+    end
     for i = 1, #trackedIds do
         local id = trackedIds[i];
         if isAchievementComplete(id) then
@@ -92,9 +118,9 @@ SLASH_VARZOFTWEAKS1 = "/vt"
 SLASH_VARZOFTWEAKS2 = "/varzoftweaks"
 
 SlashCmdList.VARZOFTWEAKS = function()
-    InterfaceOptionsFrame_OpenToCategory(f.panel)
+    Settings.OpenToCategory(NS.settingsCategoryID)
 end
 
 function VarzofTweak_OnAddonCompartmentClick()
-    InterfaceOptionsFrame_OpenToCategory(f.panel)
+    Settings.OpenToCategory(NS.settingsCategoryID)
 end

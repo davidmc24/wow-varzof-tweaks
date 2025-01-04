@@ -8,4 +8,4 @@ if [ ! -d "${addonDir}" ]; then
   mkdir "${addonDir}"
 fi
 
-cp -r *.toc *.lua assets "${addonDir}/"
+cp -v -r *.toc *.lua assets "${addonDir}/"

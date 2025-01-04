@@ -1,4 +1,4 @@
-## Interface: 100206
+## Interface: 110007
 ## Title: Varzof's UI Tweaks
 ## Notes: Assorted UI tweaks provided by |cFF69CCF0Varzof|r
 ## Author: David M. Carr (Varzof)
