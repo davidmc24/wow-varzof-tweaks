@@ -2,7 +2,7 @@ local curAddonName, NS = ...;
 local curAddonTitle = "Varzof's UI Tweaks";
 local messagePrefix = WrapTextInColorCode(curAddonName, "FF69CCF0") .. ":";
 local ACHIEVEMENT_FLAG_ACCOUNT_WIDE = 0x20000;
-local debug = true;
+local debug = false;
 
 local defaults = {
     untrackCompletedAchievements = false,
