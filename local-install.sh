@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+./local-verify.sh
+
 addonName="VarzofTweaks"
 addonsDir="/Applications/World of Warcraft/_retail_/Interface/AddOns"
 addonDir="${addonsDir}/${addonName}"

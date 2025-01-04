@@ -69,6 +69,7 @@ globals = {
     -- WoW Enums
     "Enum.ContentTrackingType.Achievement", -- https://wowpedia.fandom.com/wiki/Enum.ContentTrackingType
     "Enum.ContentTrackingStopType.Collected",
+    "Enum.ContentTrackingStopType.Manual",
 
     -- WoW APIs
 	"C_ContentTracking.GetTrackedIDs", -- https://wowpedia.fandom.com/wiki/API_C_ContentTracking.GetTrackedIDs
@@ -79,4 +80,9 @@ globals = {
 	"InterfaceOptions_AddCategory",
 	"InterfaceOptionsFrame_OpenToCategory",
 	"WrapTextInColorCode", -- https://wowpedia.fandom.com/wiki/API_ColorMixin_WrapTextInColorCode
+	"Settings.RegisterVerticalLayoutCategory",
+	"Settings.RegisterAddOnSetting",
+	"Settings.CreateCheckbox",
+	"Settings.RegisterAddOnCategory",
+	"Settings.OpenToCategory",
 }
